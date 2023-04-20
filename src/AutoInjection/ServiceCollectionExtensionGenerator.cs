@@ -12,5 +12,7 @@ public class ServiceCollectionExtensionGenerator : IIncrementalGenerator
        context.RegisterPostInitializationOutput(ctx 
            => ctx.AddSource("InjectServiceAttribute.g.cs",
                SourceText.From(SourceTexts.ServiceInjectionSourceText, Encoding.UTF8)));
+       
+       
     }
 }
