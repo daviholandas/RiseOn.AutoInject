@@ -1,0 +1,30 @@
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '7.0.x'
+    includePreviewVersions: true
+    performMultiLevelLookup: true
+
+- script: dotnet restore
+  displayName: 'Restore'
+
+- script: dotnet build --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
+  displayName: Build
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'f67aa3e2-f58c-4259-92a0-d080764e07ed'
