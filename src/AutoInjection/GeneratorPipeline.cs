@@ -79,7 +79,8 @@ public static class GeneratorPipeline
                 if (constructorArguments.Length != 2)
                     continue;
                 
-                serviceInfos.Add(new (
+                serviceInfos.Add(
+                    new (
                     classSymbol.ToDisplayString(),
                     constructorArguments[0].Value switch
                     {
@@ -90,7 +91,6 @@ public static class GeneratorPipeline
                     },
                     constructorArguments[1].Value switch
                     {
-                        INamedTypeSymbol namedTypeSymbol => namedTypeSymbol.ToDisplayString(),
                         ITypeSymbol typeSymbol => typeSymbol.ToDisplayString(),
                         _ => throw new Exception("Invalid type")
                     }));

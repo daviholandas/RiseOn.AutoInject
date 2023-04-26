@@ -24,6 +24,7 @@ public static class SourceTexts
     public static string ServiceLifeEnum
         => @"
             namespace AutoInjection;
+
             public enum ServiceLife
             {
                 Singleton,
