@@ -7,7 +7,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <LangVersion>Latest</LangVersion>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-        <PackageId>RiseOn.ResultRail</PackageId>
+        <PackageId>RiseOn.AutoInjection</PackageId>
         <Version>1.0.0</Version>
         <Authors>Davi Holanda</Authors>
         <Company>RiseOn</Company>
