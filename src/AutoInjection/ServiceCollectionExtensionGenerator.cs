@@ -22,7 +22,7 @@ public class ServiceCollectionExtensionGenerator : IIncrementalGenerator
                predicate: static (node,
                    _) => GeneratorPipeline.IsClassSyntaxNode(node),
                transform: static (ctx,
-                   _) => GeneratorPipeline.GetClassSyntax(ctx))
+                   _) => GeneratorPipeline.GetServicesToGenerate(ctx))
            .Where(static classDeclaration => classDeclaration is not null);
 
        var servicesAndCompilation = context.CompilationProvider

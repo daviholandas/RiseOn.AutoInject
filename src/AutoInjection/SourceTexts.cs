@@ -14,7 +14,11 @@ public static class SourceTexts
             public class InjectServiceAttribute : Attribute
             {
                 public InjectServiceAttribute(ServiceLife serviceLife,
-                    Type implementationType) {}
+                    Type implementationType) 
+                    => (ServiceLife, ImplementationType) = (serviceLife, implementationType);
+
+                public ServiceLife ServiceLife { get; }
+                public Type ImplementationType { get; }
             }";
 
     public static string ServiceLifeEnum
@@ -29,7 +33,6 @@ public static class SourceTexts
 
     public static string ServiceCollectionExtensionSourceText(IEnumerable<ServiceInfo> serviceInfos)
     {
-
         var sb = new StringBuilder();
         sb.AppendLine("using System;");
         sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
@@ -40,6 +43,18 @@ public static class SourceTexts
         sb.AppendLine("    {");
         sb.AppendLine("        public static IServiceCollection AddAutoInject(this IServiceCollection services)");
         sb.AppendLine("        {");
+        foreach (var serviceInfo in serviceInfos)
+        {
+            var serviceToInject = serviceInfo.ServiceLife switch
+            {
+                "Singleton" => $"services.AddSingleton<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
+                "Scoped" => $"services.AddScoped<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
+                "Transient" => $"services.AddTransient<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
+            sb.AppendLine($"            {serviceToInject}");
+        }
         sb.AppendLine("            return services;");
         sb.AppendLine("        }");
         sb.AppendLine("    }");

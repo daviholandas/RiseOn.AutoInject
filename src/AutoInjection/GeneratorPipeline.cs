@@ -11,7 +11,7 @@ public static class GeneratorPipeline
     public static bool IsClassSyntaxNode(SyntaxNode node)
         => node is ClassDeclarationSyntax { AttributeLists.Count:  > 0 };
 
-    public static ClassDeclarationSyntax? GetClassSyntax(GeneratorSyntaxContext context)
+    public static ClassDeclarationSyntax? GetServicesToGenerate(GeneratorSyntaxContext context)
     {
         var classSyntax = context.Node as ClassDeclarationSyntax;
 
@@ -43,7 +43,7 @@ public static class GeneratorPipeline
         var distinctServices = services.Distinct();
 
         var servicesToGenerate = GetServicesToInject(compilation,
-            services, context.CancellationToken);
+            distinctServices, context.CancellationToken);
 
         if (servicesToGenerate.Any())
             context.AddSource("ServiceCollectionExtension.g.cs",
@@ -51,7 +51,7 @@ public static class GeneratorPipeline
     }
 
     private static IEnumerable<ServiceInfo> GetServicesToInject(Compilation compilation,
-        IEnumerable<ClassDeclarationSyntax> services,
+        IEnumerable<ClassDeclarationSyntax?> services,
         CancellationToken cancellationToken)
     {
         var serviceInfos = new List<ServiceInfo>();
@@ -64,35 +64,43 @@ public static class GeneratorPipeline
         foreach (var classDeclarationSyntax in services)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
-            
+            var semanticModel = compilation.GetSemanticModel(classDeclarationSyntax!.SyntaxTree);
+
             if(semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
                 continue;
-
-            var serviceName = classSymbol.ToDisplayString();
-            var serviceMembers = classSymbol.GetMembers();
-
-            var members = new List<string>(serviceMembers.Length);
-
-            foreach (var member in serviceMembers)
+            
+            foreach (var attributeData in classSymbol.GetAttributes())
             {
-                if(member is IFieldSymbol field && field.ConstantValue is not null)
-                    members.Add(member.Name);
-            }
+                if(!SymbolEqualityComparer.Default.Equals(attributeData.AttributeClass, injectServiceAttributeSymbol))
+                    continue;
 
-            serviceInfos.Add(new ServiceInfo(serviceName, 
-                classSymbol.ContainingNamespace.ToDisplayString(),
-                classSymbol.ToDisplayString(),
-                "Transient",
-                classSymbol.ToDisplayString()));
+                var constructorArguments = attributeData.ConstructorArguments;
+
+                if (constructorArguments.Length != 2)
+                    continue;
+                
+                serviceInfos.Add(new (
+                    classSymbol.ToDisplayString(),
+                    constructorArguments[0].Value switch
+                    {
+                        0 => "Singleton",
+                        1 => "Scoped",
+                        2 => "Transient",
+                        _ => throw new ArgumentOutOfRangeException()
+                    },
+                    constructorArguments[1].Value switch
+                    {
+                        INamedTypeSymbol namedTypeSymbol => namedTypeSymbol.ToDisplayString(),
+                        ITypeSymbol typeSymbol => typeSymbol.ToDisplayString(),
+                        _ => throw new Exception("Invalid type")
+                    }));
+            }
         }
 
         return serviceInfos;
     }
 }
 
-public record struct ServiceInfo(string Name, 
-    string Namespace, 
-    string FullName,
+public record struct ServiceInfo(string Name,
     string ServiceLife,
     string ImplementationType);
