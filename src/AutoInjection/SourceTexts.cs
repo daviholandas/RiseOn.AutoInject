@@ -14,11 +14,13 @@ public static class SourceTexts
             public class InjectServiceAttribute : Attribute
             {
                 public InjectServiceAttribute(ServiceLife serviceLife,
-                    Type implementationType) 
-                    => (ServiceLife, ImplementationType) = (serviceLife, implementationType);
+                    Type implementationType, string collectionName =  ""AutoInject"") 
+                    => (ServiceLife, ImplementationType, CollectionName) =
+                             (serviceLife, implementationType, collectionName);
 
                 public ServiceLife ServiceLife { get; }
                 public Type ImplementationType { get; }
+                public string CollectionName { get; }
             }";
 
     public static string ServiceLifeEnum
@@ -42,25 +44,27 @@ public static class SourceTexts
         sb.AppendLine("{");
         sb.AppendLine("    public static class ServiceCollectionExtension");
         sb.AppendLine("    {");
-        sb.AppendLine("        public static IServiceCollection AddAutoInject(this IServiceCollection services)");
-        sb.AppendLine("        {");
-        foreach (var serviceInfo in serviceInfos)
+        foreach (var collection in serviceInfos.Select(x => x.CollectionName).Distinct())
         {
-            var serviceToInject = serviceInfo.ServiceLife switch
+            sb.AppendLine($"        public static IServiceCollection {collection}(this IServiceCollection services)");
+            sb.AppendLine("        {");
+            foreach (var serviceInfo in serviceInfos)
             {
-                "Singleton" => $"services.AddSingleton<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
-                "Scoped" => $"services.AddScoped<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
-                "Transient" => $"services.AddTransient<{serviceInfo.ImplementationType}, {serviceInfo.Name}>();",
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            
-            sb.AppendLine($"            {serviceToInject}");
+                var serviceToInject = serviceInfo.ServiceLife switch
+                {
+                    "Singleton" => $"services.AddSingleton<{serviceInfo.ImplementationType}, {serviceInfo.ServiceName}>();",
+                    "Scoped" => $"services.AddScoped<{serviceInfo.ImplementationType}, {serviceInfo.ServiceName}>();",
+                    "Transient" => $"services.AddTransient<{serviceInfo.ImplementationType}, {serviceInfo.ServiceName}>();",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                sb.AppendLine($"            {serviceToInject}");
+            }
+            sb.AppendLine("            return services;");
+            sb.AppendLine("        }");
         }
-        sb.AppendLine("            return services;");
-        sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine("}");
-        
         return sb.ToString();
     }
 }

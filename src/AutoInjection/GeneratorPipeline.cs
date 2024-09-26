@@ -76,7 +76,7 @@ public static class GeneratorPipeline
 
                 var constructorArguments = attributeData.ConstructorArguments;
 
-                if (constructorArguments.Length != 2)
+                if (constructorArguments.Length != 3)
                     continue;
                 
                 serviceInfos.Add(
@@ -93,6 +93,11 @@ public static class GeneratorPipeline
                     {
                         ITypeSymbol typeSymbol => typeSymbol.ToDisplayString(),
                         _ => throw new Exception("Invalid type")
+                    },
+                    constructorArguments[2].Value switch
+                    {
+                        string collectionName => collectionName,
+                        _ => throw new Exception("Invalid collection name")
                     }));
             }
         }
@@ -101,6 +106,7 @@ public static class GeneratorPipeline
     }
 }
 
-public record struct ServiceInfo(string Name,
+public record struct ServiceInfo(string ServiceName,
     string ServiceLife,
-    string ImplementationType);
+    string ImplementationType,
+    string CollectionName);
