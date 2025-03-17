@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/AutoInject.SourceGenerator/AutoInject.SourceGenerator.csproj" />
+  <Project Path="src\AutoInject.Attributes\AutoInject.Attributes.csproj" />
+</Solution>
