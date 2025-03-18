@@ -1,8 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>9</LangVersion>
+	  <TargetFramework>netstandard2.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+	  <IncludeBuildOutput>false</IncludeBuildOutput>
+	  <LangVersion>9</LangVersion>
+	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+	  <PackageId>RiseOn.AutoInjection</PackageId>
+	  <Version>1.0.0</Version>
+	  <Authors>Davi Holanda</Authors>
+	  <Company>RiseOn</Company>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
