@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading;
 using AutoInject.Attributes;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
 namespace AutoInject.SourceGenerator
@@ -13,33 +15,35 @@ namespace AutoInject.SourceGenerator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var result = context.SyntaxProvider.ForAttributeWithMetadataName(typeof(Attributes.AutoInjectAttribute).FullName,
+            var result = context.SyntaxProvider.ForAttributeWithMetadataName(
+                    typeof(AutoInjectAttribute).FullName!,
                 predicate:  static (node, token) => true,
                 transform: (syntaxContext, token) => GetServicesInfo(syntaxContext.SemanticModel,
-                    syntaxContex, token));
-                );
-
-            context.RegisterSourceOutput(result, static (sourceProduction, source) =>
-            {
-                if (source != null)
-                {
-                    sourceProduction.AddSource("ServiceCollectionGenerator.g.cs", source.ServiceLifetime.ToString());
-                }
-            });
+                    syntaxContext.TargetNode, token))
+                .Where(services => services is not null && services.Any());
         }
 
-        static  IEnumerable<ServiceContainer> GetServicesInfo(SemanticModel syntaxContext, SyntaxNode node,
+        static  IEnumerable<ServiceInfo> GetServicesInfo(SemanticModel syntaxContext,
+            SyntaxNode node,
             CancellationToken token)
         {
-            var services = new List<ServiceContainer>();
-            foreach (var attribute in syntaxContext.Attributes)
-            {
-                var serviceInterface = attribute.GetAttributeArgumentValue<Type>(nameof(Attributes.AutoInjectAttribute.ServiceInterface));
-                var serviceLifetime = attribute.GetAttributeArgumentValue<ServiceLifetime>(nameof(Attributes.AutoInjectAttribute.ServiceLifetime));
-                var groupName = attribute.GetAttributeArgumentValue<string>(nameof(Attributes.AutoInjectAttribute.GroupName));
+            var services = new List<ServiceInfo>();
 
-                services.Add(new ServiceContainer(serviceInterface, serviceLifetime, groupName));
-            }
+            if(node is not ClassDeclarationSyntax classDeclaration)
+                throw new Exception("Can't find class declaration");
+
+            var attribute = classDeclaration.AttributeLists.SelectMany(list => list.Attributes)
+                .First(attribute => attribute.Name.ToString() == "AutoInjectAttribute");
+                   
+
+            //foreach (var attribute in(node as ClassDeclarationSyntax).AttributeLists.SelectMany(list => list.Attributes).Select(x => x.ArgumentList))
+            //{
+            //    /*var serviceInterface = attribute.GetAttributeArgumentValue<Type>(nameof(Attributes.AutoInjectAttribute.ServiceInterface));
+            //    var serviceLifetime = attribute.GetAttributeArgumentValue<ServiceLifetime>(nameof(Attributes.AutoInjectAttribute.ServiceLifetime));
+            //    var groupName = attribute.GetAttributeArgumentValue<string>(nameof(Attributes.AutoInjectAttribute.GroupName));
+
+            //    services.Add(new ServiceContainer(serviceInterface, serviceLifetime, groupName));*/
+            //}
 
             return services;
         }

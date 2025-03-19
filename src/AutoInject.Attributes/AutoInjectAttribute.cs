@@ -6,17 +6,25 @@ namespace AutoInject.Attributes
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public class AutoInjectAttribute : Attribute
     {
-        public AutoInjectAttribute(Type serviceInterface,
-            ServiceLifetime serviceLifetime,
-            string? groupName = "AutoInject")
+        public AutoInjectAttribute(ServiceLifetime serviceLifetime,
+            string? groupName = "AutoInjected")
         {
-            ServiceInterface = serviceInterface;
             ServiceLifetime = serviceLifetime;
-            GroupName = groupName;
+            ImplementationBy = null;
+            GroupName = groupName ?? "AutoInjected";
         }
 
-        public Type ServiceInterface { get; }
+        public AutoInjectAttribute(ServiceLifetime serviceLifetime,
+            Type? implementationBy,
+            string? groupName)
+        {
+            ServiceLifetime = serviceLifetime;
+            ImplementationBy = implementationBy;
+            GroupName = groupName ?? "AutoInjected";
+        }
+
         public ServiceLifetime ServiceLifetime { get; }
-        public string? GroupName { get; }
+        public Type? ImplementationBy { get; }
+        public string GroupName { get; }
     }
 }
