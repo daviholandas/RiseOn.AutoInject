@@ -10,7 +10,7 @@ public interface IServiceExample
 }
 
 
-[AutoInject(ServiceLifetime.Singleton, "ServicesTests")]
+[AutoInject(ServiceLifetime.Singleton, typeof(IServiceExample), "Example")]
 [JsonSourceGenerationOptions()]
 public class ServiceExample
 {

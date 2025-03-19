@@ -1,21 +1,23 @@
 ﻿namespace AutoInject.SourceGenerator
 {
-    public readonly struct ServiceInfo
+    public sealed record ServiceInfo
     {
-        public ServiceInfo(string interfaceName,
-            string implementationName,
+        public ServiceInfo(string serviceName,
             string serviceLifetime,
-            string groupName)
+            string implementationName,
+            string groupName,
+            string ns)
         {
-            InterfaceName = interfaceName;
-            ImplementationName = implementationName;
+            ServiceName = serviceName;
             ServiceLifetime = serviceLifetime;
+            ImplementationName = implementationName;
             GroupName = groupName;
+            Namespace = ns;
         }
-
-        public readonly string InterfaceName;
-        public readonly string ImplementationName;
+        public readonly string ServiceName;
         public readonly string ServiceLifetime;
+        public readonly string ImplementationName;
         public readonly string GroupName;
+        public readonly string Namespace;
     }
 }

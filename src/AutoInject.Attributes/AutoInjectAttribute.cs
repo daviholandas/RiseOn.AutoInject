@@ -25,6 +25,10 @@ namespace AutoInject.Attributes
 
         public ServiceLifetime ServiceLifetime { get; }
         public Type? ImplementationBy { get; }
+
+        /// <summary>
+        /// Group name for the service or namespace
+        /// </summary>
         public string GroupName { get; }
     }
 }
