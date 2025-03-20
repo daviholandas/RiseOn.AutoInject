@@ -22,11 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <Nome Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <Nome Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AutoInject.Attributes\AutoInject.Attributes.csproj" />
+    <ProjectReference Include="..\AutoInject.Attributes\AutoInject.Attributes.csproj" OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
   </ItemGroup>
 
 </Project>

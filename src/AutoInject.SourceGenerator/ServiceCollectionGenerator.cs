@@ -19,17 +19,17 @@ namespace AutoInject.SourceGenerator
         {
             var result = context.SyntaxProvider.ForAttributeWithMetadataName(
                     typeof(AutoInjectAttribute).FullName!,
-                predicate:  static (_, _) => true,
+                predicate:  static (node, _) => node is ClassDeclarationSyntax,
                 transform: (syntaxContext, token) => GetServicesInfo(syntaxContext.SemanticModel,
                     syntaxContext.TargetNode, token))
                 .Where(services => services is not null);
 
-            var services = result.Collect(); ;
+            var services = result.Collect();
 
             context.RegisterImplementationSourceOutput(services,
                 static (context, services) =>
                 {
-                    context.AddSource("ServiceCollectionGenerator.g.cs",
+                    context.AddSource("ServiceExtension.g.cs",
                         SourceText.From(GenerateServiceCollection(services), Encoding.UTF8));
                 });
         }
