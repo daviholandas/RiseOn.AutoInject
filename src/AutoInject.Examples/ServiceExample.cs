@@ -1,5 +1,6 @@
 ﻿using AutoInject.Attributes;
 using System.Text.Json.Serialization;
+using RiseOn.AutoInject;
 
 namespace AutoInject.Examples;
 
@@ -10,7 +11,7 @@ public interface IServiceExample
 }
 
 
-[AutoInject(ServiceLifetime.Singleton, typeof(IServiceExample), "Example")]
+[InjectService(ServiceLifetime.Singleton, "ServicesTests")]
 [JsonSourceGenerationOptions()]
 public class ServiceExample
 {

@@ -1,12 +1,13 @@
 ﻿#nullable enable
 using System;
+using AutoInject.Attributes;
 
-namespace AutoInject.Attributes
+namespace RiseOn.AutoInject
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public class AutoInjectAttribute : Attribute
+    public class InjectServiceAttribute : Attribute
     {
-        public AutoInjectAttribute(ServiceLifetime serviceLifetime,
+        public InjectServiceAttribute(ServiceLifetime serviceLifetime,
             string? groupName = "AutoInjected")
         {
             ServiceLifetime = serviceLifetime;
@@ -14,7 +15,7 @@ namespace AutoInject.Attributes
             GroupName = groupName ?? "AutoInjected";
         }
 
-        public AutoInjectAttribute(ServiceLifetime serviceLifetime,
+        public InjectServiceAttribute(ServiceLifetime serviceLifetime,
             Type? implementationBy,
             string? groupName)
         {

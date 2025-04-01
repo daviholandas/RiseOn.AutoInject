@@ -1,8 +1,9 @@
-﻿using AutoInject.Attributes;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RiseOn.AutoInject;
 
 
 var services = new ServiceCollection();
 
-Console.Write(typeof(AutoInjectAttribute).FullName);
+
+Console.Write(typeof(InjectServiceAttribute).FullName);
 
