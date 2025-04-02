@@ -11,9 +11,17 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetime.Singleton, "ServicesTests")]
+[InjectService(ServiceLifetime.Singleton, groupName: "AutoInject")]
 [JsonSourceGenerationOptions()]
-public class ServiceExample
+public class ServiceExample : ServiceExampleBase
 {
-    
+    public override  void DoSomething()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public abstract class ServiceExampleBase
+{
+    public abstract void DoSomething();
 }

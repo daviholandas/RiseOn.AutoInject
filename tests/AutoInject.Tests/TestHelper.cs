@@ -1,6 +1,7 @@
 ﻿using AutoInject.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using RiseOn.AutoInject;
 
 namespace AutoInject.Tests;
 
