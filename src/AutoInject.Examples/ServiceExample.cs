@@ -11,11 +11,11 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetime.Singleton, groupName: "AutoInject")]
+[InjectService(ServiceLifetimeType.Transient, groupName:"IoCServices")]
 [JsonSourceGenerationOptions()]
-public class ServiceExample : ServiceExampleBase
+public class ServiceExample
 {
-    public override  void DoSomething()
+    public void DoSomething()
     {
         throw new NotImplementedException();
     }

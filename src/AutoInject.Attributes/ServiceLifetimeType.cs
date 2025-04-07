@@ -1,6 +1,6 @@
 ﻿namespace AutoInject.Attributes
 {
-    public enum ServiceLifetime
+    public enum ServiceLifetimeType
     {
         Singleton,
         Scoped,

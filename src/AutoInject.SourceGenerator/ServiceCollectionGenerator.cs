@@ -38,18 +38,23 @@ namespace RiseOn.AutoInject
             var interfaceName  = symbol.Interfaces.FirstOrDefault()?.ToDisplayString();
             var baseName = symbol.BaseType?.ToDisplayString();
 
-            var re = context.Attributes.FirstOrDefault();
-
-            //var groupName = context.Attributes[0].NamedArguments.FirstOrDefault(x => x.Key == "GroupName").Value;
+            var arguments = context.Attributes.First().ConstructorArguments;
 
 
 
 
             return new ServiceInfo
             {
+                ServiceLifetime = arguments[0].Value!.ToString() switch
+                {
+                    "0" => "Singleton",
+                    "1" => "Scoped",
+                    "2" => "Transient",
+                },
                 Namespace = ns,
-                ImplementationName = interfaceName ?? baseName,
+                ImplementationName = !arguments[1].IsNull ?  interfaceName ?? baseName : (string?) arguments[1].Value,
                 ServiceName = name,
+                GroupName = arguments[2].Value!.ToString(),
             };
         }
     }

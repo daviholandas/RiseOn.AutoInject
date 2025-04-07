@@ -7,16 +7,16 @@ namespace RiseOn.AutoInject
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public class InjectServiceAttribute : Attribute
     {
-        public InjectServiceAttribute(ServiceLifetime serviceLifetime,
-            string? groupName = "AutoInjected",
-            Type? implementationBy = null)
+        public InjectServiceAttribute(ServiceLifetimeType serviceLifetimeType,
+            Type? implementationBy = null,
+            string? groupName = "AutoInjected")
         {
-            ServiceLifetime = serviceLifetime;
+            ServiceLifetimeType = serviceLifetimeType;
+            ImplementationBy =  implementationBy;
             GroupName = groupName ?? "AutoInjected";
-            ImplementationBy = implementationBy;
         }
 
-        public ServiceLifetime ServiceLifetime { get; }
+        public ServiceLifetimeType ServiceLifetimeType { get; }
         public Type? ImplementationBy { get; }
 
         /// <summary>
