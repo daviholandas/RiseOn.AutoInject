@@ -8,6 +8,7 @@ namespace RiseOn.AutoInject
     public class InjectServiceAttribute : Attribute
     {
         public InjectServiceAttribute(ServiceLifetimeType serviceLifetimeType,
+            bool getImplementationBy = true,
             Type? implementationBy = null,
             string? groupName = "AutoInjected")
         {

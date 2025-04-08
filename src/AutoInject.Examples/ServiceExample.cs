@@ -11,9 +11,9 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetimeType.Transient, groupName:"IoCServices")]
+[InjectService(ServiceLifetimeType.Transient,implementationBy:typeof(ServiceExampleBase), groupName:"IoCServices")]
 [JsonSourceGenerationOptions()]
-public class ServiceExample
+public class ServiceExample : IServiceExample
 {
     public void DoSomething()
     {
