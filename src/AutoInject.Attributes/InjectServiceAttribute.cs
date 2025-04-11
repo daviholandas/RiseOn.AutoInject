@@ -10,11 +10,11 @@ namespace RiseOn.AutoInject
         public InjectServiceAttribute(ServiceLifetimeType serviceLifetimeType,
             bool getImplementationBy = true,
             Type? implementationBy = null,
-            string? groupName = "AutoInjected")
+            string? collectionName = "AutoInjected")
         {
             ServiceLifetimeType = serviceLifetimeType;
             ImplementationBy =  implementationBy;
-            GroupName = groupName ?? "AutoInjected";
+            CollectionName = collectionName ?? "AutoInjected";
         }
 
         public ServiceLifetimeType ServiceLifetimeType { get; }
@@ -23,6 +23,6 @@ namespace RiseOn.AutoInject
         /// <summary>
         /// Group name for the service or namespace
         /// </summary>
-        public string GroupName { get; }
+        public string CollectionName { get; }
     }
 }

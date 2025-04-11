@@ -20,13 +20,17 @@ namespace RiseOn.AutoInject
                     "RiseOn.AutoInject.InjectServiceAttribute",
                     predicate: static (node, _) => node is ClassDeclarationSyntax { AttributeLists: { Count: > 0 } },
                     transform: static (syntaxContext, _) => GetServiceInfo(syntaxContext))
-                .Collect();
+                .Collect()
+                .Select((service, _ ) => service.Distinct());
 
             context.RegisterSourceOutput(result,
                static (context, services) =>
                 {
-                    context.AddSource("ServiceCollectionGenerator.g.cs",
-                        SourceText.From(GenerateSourceClass(services.First()), Encoding.UTF8));
+                    foreach (var serviceGrouped in services.GroupBy(x => x.CollectionName))
+                    {
+                        context.AddSource($"{serviceGrouped.Key}ServiceCollectionExtension.g.cs",
+                            SourceText.From(GenerateSourceClass(serviceGrouped.Select(x => x)), Encoding.UTF8));
+                    }
                 });
         }
 
@@ -50,31 +54,44 @@ namespace RiseOn.AutoInject
                 _ => throw new InvalidOperationException("Invalid service lifetime value")
             };
 
-            // TODO: Validate the arguments
-            var implementationName = (bool?)arguments[1].Value ?? false && arguments[2].IsNull
+            // TODO: the implementation name does not get null if the attribute is not set
+            var getImplementationBy = (bool?)arguments[1].Value ?? false;
+            var implementationName = getImplementationBy && arguments[2].IsNull
                 ? interfaceName ?? baseName
-                : arguments[2].Value!.ToString();
+                : null;
 
-            return new ServiceInfo
+            return new ()
             {
                 ServiceLifetime = serviceLifetime,
                 Namespace = ns,
                 ServiceName = name,
-                GroupName = arguments[3].Value!.ToString(),
-                ImplementationName = implementationName
+                CollectionName = arguments[3].Value!.ToString(),
+                ImplementationName = null
             };
         }
 
-        static string GenerateSourceClass(ServiceInfo serviceInfo)
+        static string GenerateSourceClass(IEnumerable<ServiceInfo> serviceInfos)
         {
             var sb = new StringBuilder();
+            var service = serviceInfos.First();
             sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
-            sb.AppendLine($"namespace {serviceInfo.Namespace}.{serviceInfo.GroupName};");
-            sb.AppendLine($"public static class {serviceInfo.GroupName}ServiceCollectionExtensions");
+            sb.AppendLine($"namespace {service.Namespace}.{service.CollectionName};");
+            sb.AppendLine($"public static class {service.CollectionName}ServiceCollectionExtensions");
             sb.AppendLine("{");
-            sb.AppendLine($"    public static IServiceCollection Add{serviceInfo.GroupName}Services(this IServiceCollection services)");
+            sb.AppendLine($"    public static IServiceCollection Add{service.CollectionName}Services(this IServiceCollection services)");
             sb.AppendLine("    {");
-            sb.AppendLine($"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ServiceName}, {serviceInfo.ImplementationName}>();");
+
+            foreach (var serviceInfo in serviceInfos)
+            {
+                if(serviceInfo.ImplementationName is null)
+                {
+                    sb.AppendLine($"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ServiceName}>();");
+                }
+                else
+                {
+                    sb.AppendLine($"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ImplementationName}, {serviceInfo.ServiceName}>();");
+                }
+            }
             sb.AppendLine("        return services;");
             sb.AppendLine("    }");
             sb.AppendLine("}");

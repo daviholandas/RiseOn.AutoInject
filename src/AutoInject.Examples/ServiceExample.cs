@@ -11,9 +11,9 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetimeType.Transient,implementationBy:typeof(ServiceExampleBase), groupName:"IoCServices")]
+[InjectService(ServiceLifetimeType.Transient, collectionName:"IoCServices")]
 [JsonSourceGenerationOptions()]
-public class ServiceExample : IServiceExample
+public class ServiceExample
 {
     public void DoSomething()
     {
@@ -24,4 +24,13 @@ public class ServiceExample : IServiceExample
 public abstract class ServiceExampleBase
 {
     public abstract void DoSomething();
+}
+
+[InjectService(ServiceLifetimeType.Singleton, collectionName:"IoCServices")]
+public class ServiceExampleDerived : ServiceExampleBase
+{
+    public override void DoSomething()
+    {
+        throw new NotImplementedException();
+    }
 }
