@@ -9,7 +9,7 @@ public interface IServicesSample
 }
 
 
-[InjectService(ServiceLifetimeType.Singleton, collectionName: "Samples")]
+//[InjectService(ServiceLifetimeType.Singleton, collectionName: "Samples")]
 public class ServicesSample
 {
     public void DoSomething()

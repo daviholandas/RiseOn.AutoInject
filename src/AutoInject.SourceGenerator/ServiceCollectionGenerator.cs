@@ -54,11 +54,14 @@ namespace RiseOn.AutoInject
                 _ => throw new InvalidOperationException("Invalid service lifetime value")
             };
 
-            // TODO: the implementation name does not get null if the attribute is not set
-            var getImplementationBy = (bool?)arguments[1].Value ?? false;
-            var implementationName = getImplementationBy && arguments[2].IsNull
+            var collectionName = arguments[3].Value!.ToString();
+
+            // TODO: Check if the collection name is valid
+            /*var implementationName = arguments[2].IsNull
                 ? interfaceName ?? baseName
-                : null;
+                : arguments[2].Type is ITypeSymbol typeSymbol
+                    ? typeSymbol.ToDisplayString()
+                    : null;*/
 
             return new ()
             {
@@ -66,7 +69,9 @@ namespace RiseOn.AutoInject
                 Namespace = ns,
                 ServiceName = name,
                 CollectionName = arguments[3].Value!.ToString(),
-                ImplementationName = null
+                ImplementationName = arguments[2].Value is ITypeSymbol typeSymbol
+                    ? typeSymbol.ToDisplayString()
+                    : null
             };
         }
 
