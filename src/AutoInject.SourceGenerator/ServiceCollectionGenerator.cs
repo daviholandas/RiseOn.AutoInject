@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace RiseOn.AutoInject
@@ -43,7 +44,8 @@ namespace RiseOn.AutoInject
             var name = symbol.ToDisplayString();
 
             var interfaceName = symbol.Interfaces.FirstOrDefault()?.ToDisplayString();
-            var baseName = (bool) symbol.BaseType?.ToDisplayString().Equals("object") ? null : symbol.BaseType.ToDisplayString() ;
+            var baseTypeName = symbol.BaseType?.ToDisplayString();
+            var baseName = baseTypeName == "object" ? null : baseTypeName;
 
             var arguments = context.Attributes.First().ConstructorArguments;
 
@@ -69,12 +71,13 @@ namespace RiseOn.AutoInject
             };
         }
 
+
         private static string GenerateSourceClass(IEnumerable<ServiceInfo> serviceInfos)
         {
             var sb = new StringBuilder();
             var service = serviceInfos.First();
-            sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
-            sb.AppendLine($"namespace {service.Namespace}.{service.CollectionName};");
+            sb.AppendLine("using Microsoft.Extensions.DependencyInjection;\n");
+            sb.AppendLine($"namespace {service.Namespace}.{service.CollectionName};\n");
             sb.AppendLine($"public static class {service.CollectionName}ServiceCollectionExtensions");
             sb.AppendLine("{");
             sb.AppendLine($"    public static IServiceCollection Add{service.CollectionName}Services(this IServiceCollection services)");
@@ -82,14 +85,9 @@ namespace RiseOn.AutoInject
 
             foreach (var serviceInfo in serviceInfos)
             {
-                if(serviceInfo.ImplementationName is null)
-                {
-                    sb.AppendLine($"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ServiceName}>();");
-                }
-                else
-                {
-                    sb.AppendLine($"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ImplementationName}, {serviceInfo.ServiceName}>();");
-                }
+                sb.AppendLine(serviceInfo.ImplementationName is null
+                    ? $"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ServiceName}>();"
+                    : $"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ImplementationName}, {serviceInfo.ServiceName}>();");
             }
             sb.AppendLine("        return services;");
             sb.AppendLine("    }");
