@@ -11,8 +11,8 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetimeType.Transient, collectionName:"IoCServices")]
-public class ServiceExample : ServiceExampleBase
+[InjectService(ServiceLifetimeType.Transient,collectionName:"IoCServices")]
+public class ServiceExample : ServiceExampleBase, IServiceExample
 {
     public override void DoSomething()
     {
