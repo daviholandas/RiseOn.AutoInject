@@ -1,4 +1,3 @@
-using AutoInject.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -37,36 +36,43 @@ namespace RiseOn.AutoInject
 
         private static ServiceInfo GetServiceInfo(GeneratorAttributeSyntaxContext context)
         {
-            // Symbol is the class that has the attribute
+            
             var symbol = (INamedTypeSymbol)context.TargetSymbol;
             var ns = symbol.ContainingNamespace.ToDisplayString();
             var name = symbol.ToDisplayString();
 
-            var interfaceName = symbol.Interfaces.FirstOrDefault()?.ToDisplayString();
-            var baseTypeName = symbol.BaseType?.ToDisplayString();
-            var baseName = baseTypeName == "object" ? null : baseTypeName;
+            var interfaceName = symbol.Interfaces.Length > 0 ? symbol.Interfaces[0].ToDisplayString() : null;
+            var baseType = symbol.BaseType;
+            var baseName = baseType != null &&
+                           baseType.SpecialType != SpecialType.System_Object ?
+                baseType.ToDisplayString() :
+                null;
 
-            var arguments = context.Attributes.First().ConstructorArguments;
+            var arguments = context.Attributes[0].ConstructorArguments;
 
-            var serviceLifetime = arguments[0].Value!.ToString() switch
+            var serviceLifetime = arguments[0].Value?.ToString() switch
             {
                 "0" => "Singleton",
                 "1" => "Scoped",
                 "2" => "Transient",
-                _ => throw new InvalidOperationException("Invalid service lifetime value")
+                _ => throw new InvalidOperationException($"Invalid service lifetime value: {arguments[0].Value}")
             };
 
-            return new ()
+            string? implementationName;
+            if (arguments.Length > 1 && !arguments[1].IsNull)
+                implementationName = arguments[1].Value is ITypeSymbol typeSymbol
+                    ? typeSymbol.ToDisplayString()
+                    : null;
+            else
+                implementationName = interfaceName ?? baseName;
+
+            return new()
             {
                 ServiceLifetime = serviceLifetime,
                 Namespace = ns,
                 ServiceName = name,
-                CollectionName = arguments[2].Value!.ToString(),
-                ImplementationName = arguments[1].IsNull
-                    ? interfaceName ?? baseName
-                    : arguments[1].Value is ITypeSymbol typeSymbol
-                        ? typeSymbol.ToDisplayString()
-                        : null
+                CollectionName = arguments[2].Value?.ToString()!,
+                ImplementationName = implementationName
             };
         }
 

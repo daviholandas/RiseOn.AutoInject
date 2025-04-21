@@ -4,6 +4,7 @@ using AutoInject.Attributes;
 
 namespace RiseOn.AutoInject
 {
+    // TODO: Create documentation.
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class InjectServiceAttribute : Attribute
     {

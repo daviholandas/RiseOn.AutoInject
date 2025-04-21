@@ -1,8 +1,30 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.35906.104
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{BCEAFF9B-8D8B-436F-A0FB-9E6E64AB2624}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInject.SourceGenerator", "src\AutoInject.SourceGenerator\AutoInject.SourceGenerator.csproj", "{D579840B-7C85-4FFD-B8EC-3A6A8E16DB07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInject.Attributes", "src\AutoInject.Attributes\AutoInject.Attributes.csproj", "{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCEAFF9B-8D8B-436F-A0FB-9E6E64AB2624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCEAFF9B-8D8B-436F-A0FB-9E6E64AB2624}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D579840B-7C85-4FFD-B8EC-3A6A8E16DB07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D579840B-7C85-4FFD-B8EC-3A6A8E16DB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D579840B-7C85-4FFD-B8EC-3A6A8E16DB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D579840B-7C85-4FFD-B8EC-3A6A8E16DB07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

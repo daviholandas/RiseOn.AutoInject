@@ -1,8 +1,11 @@
 <Solution>
+  <Folder Name="/build/">
+    <Project Path="build/_build.csproj" />
+  </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests\AutoInject.Tests\AutoInject.Tests.csproj" Type="Classic C#" />
+    <Project Path="tests/AutoInject.Tests/AutoInject.Tests.csproj" Type="Classic C#" />
   </Folder>
   <Project Path="src/AutoInject.Examples/AutoInject.Examples.csproj" />
   <Project Path="src/AutoInject.SourceGenerator/AutoInject.SourceGenerator.csproj" />
-  <Project Path="src\AutoInject.Attributes\AutoInject.Attributes.csproj" />
+  <Project Path="src/AutoInject.Attributes/AutoInject.Attributes.csproj" />
 </Solution>
