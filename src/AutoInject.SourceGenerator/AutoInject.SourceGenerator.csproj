@@ -1,17 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>netstandard2.0</TargetFramework>
-	  <Nullable>enable</Nullable>
-	  <IncludeBuildOutput>false</IncludeBuildOutput>
-	  <LangVersion>9</LangVersion>
-	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-	  <PackageId>RiseOn.AutoInjection</PackageId>
-	  <Version>1.0.0</Version>
-	  <Authors>Davi Holanda</Authors>
-	  <Company>RiseOn</Company>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <LangVersion>9</LangVersion>
+      <IncludeBuildOutput>false</IncludeBuildOutput>
+      <PackageId>RiseOn.AutoInjection</PackageId>
+      <AssemblyName>AutoInject.SourceGenerator</AssemblyName>
       <RootNamespace>RiseOn.AutoInject</RootNamespace>
+      <Nullable>enable</Nullable>
+      <Description>A source generator for creating helper extension methods on enums using a [EnumExtensions] attribute</Description>
+      <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+      <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,12 +23,17 @@
 
   <ItemGroup>
       <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-      <Nome Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-      <Nome Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
+      <None Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <None Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
+      <None Include="$(OutputPath)\AutoInject.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AutoInject.Attributes\AutoInject.Attributes.csproj" OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
+    <ProjectReference Include="..\AutoInject.Attributes\AutoInject.Attributes.csproj" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="artifacts\" />
   </ItemGroup>
 
 </Project>

@@ -36,6 +36,7 @@ namespace RiseOn.AutoInject
 
         private static ServiceInfo GetServiceInfo(GeneratorAttributeSyntaxContext context)
         {
+            // TODO: Improve the namespace declaration, try global declaration.
             
             var symbol = (INamedTypeSymbol)context.TargetSymbol;
             var ns = symbol.ContainingNamespace.ToDisplayString();

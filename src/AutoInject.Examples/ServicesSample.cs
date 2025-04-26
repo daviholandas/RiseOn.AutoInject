@@ -1,5 +1,4 @@
-﻿using AutoInject.Attributes;
-using RiseOn.AutoInject;
+﻿using RiseOn.AutoInject;
 
 namespace AutoInject.Examples;
 

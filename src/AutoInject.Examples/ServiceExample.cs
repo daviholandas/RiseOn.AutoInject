@@ -1,5 +1,4 @@
-﻿using AutoInject.Attributes;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using RiseOn.AutoInject;
 
 namespace AutoInject.Examples;
