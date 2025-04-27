@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RiseOn.AutoInject;
-using System.Security.Authentication.ExtendedProtection;
 using AutoInject.Tests.AutoInjected;
-using AutoInject.Tests.Test;
 
 namespace AutoInject.Tests;
 
@@ -13,8 +11,7 @@ public class AutoInjectionTests
     {
         var ser = new ServiceCollection();
 
-        ser.AddAutoInjectedServices()
-            .AddTestServices();
+        ser.AddAutoInjectedServices();
 
         var provider = ser.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -29,12 +26,12 @@ public class AutoInjectionTests
 [InjectService(ServiceLifetimeType.Transient)]
 public class ServiceTest {}
 
-[InjectService(ServiceLifetimeType.Scoped, collectionName: "Test")]
-public class ServiceTest2 : IServiceTest, IDisposable
+[InjectService(ServiceLifetimeType.Scoped, typeof(IServiceTest))]
+public class ServiceTest2 : IDisposable, IServiceTest
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+        //
     }
 }
 

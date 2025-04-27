@@ -10,12 +10,12 @@ public interface IServiceExample
 }
 
 
-[InjectService(ServiceLifetimeType.Transient,collectionName:"IoCServices")]
+[InjectService(ServiceLifetimeType.Transient, CollectionName = "AutoInjectedServices")]
 public class ServiceExample : ServiceExampleBase, IServiceExample
 {
     public override void DoSomething()
     {
-        throw new NotImplementedException();
+        //
     }
 }
 
@@ -24,11 +24,11 @@ public abstract class ServiceExampleBase
     public abstract void DoSomething();
 }
 
-[InjectService(ServiceLifetimeType.Singleton, collectionName:"IoCServices")]
-public class ServiceExampleDerived
+[InjectService(ServiceLifetimeType.Singleton, Key = "TestKey")]
+public class ServiceExampleDerived :IServiceExample
 {
     public void DoSomething()
     {
-        throw new NotImplementedException();
+        //
     }
 }

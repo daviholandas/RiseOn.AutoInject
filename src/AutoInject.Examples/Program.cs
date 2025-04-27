@@ -1,10 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoInject.Examples;
+using Microsoft.Extensions.DependencyInjection;
 using RiseOn.AutoInject;
 
 
 var services = new ServiceCollection();
 
+services.UseAutoInjectedServices();
+
+var pro = services.BuildServiceProvider();
+
+var ser = pro.GetRequiredKeyedService<IServiceExample>("TestKey");
 
 
-Console.Write(typeof(InjectServiceAttribute).FullName);
+Console.Write(ser.GetType().FullName);
 

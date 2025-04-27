@@ -8,11 +8,11 @@ public interface IServicesSample
 }
 
 
-[InjectService(ServiceLifetimeType.Singleton, collectionName: "Samples")]
+[InjectService(ServiceLifetimeType.Singleton)]
 public class ServicesSample
 {
     public void DoSomething()
     {
-        throw new NotImplementedException();
+        //
     }
 }

@@ -32,8 +32,4 @@
     <ProjectReference Include="..\AutoInject.Attributes\AutoInject.Attributes.csproj" PrivateAssets="All"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="artifacts\" />
-  </ItemGroup>
-
 </Project>

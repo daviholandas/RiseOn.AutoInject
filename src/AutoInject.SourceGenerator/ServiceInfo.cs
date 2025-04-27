@@ -7,5 +7,6 @@
         public string? ImplementationName { get; set; }
         public string? CollectionName { get; set; }
         public string? Namespace { get; set; }
+        public object? Key { get; set; }
     }
 }

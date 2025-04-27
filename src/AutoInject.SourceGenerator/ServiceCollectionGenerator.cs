@@ -1,8 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -16,88 +14,22 @@ namespace RiseOn.AutoInject
             var result = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     "RiseOn.AutoInject.InjectServiceAttribute",
-                    predicate: static (node, _) => node is ClassDeclarationSyntax { AttributeLists: { Count: > 0 } },
-                    transform: static (syntaxContext, _) => GetServiceInfo(syntaxContext))
+                    predicate: static (node, _) => node is ClassDeclarationSyntax {AttributeLists: {Count: > 0}},
+                    transform: static (syntaxContext, _) => SourceGeneratorHelper.GetServiceInfo(syntaxContext))
                 .Collect()
-                .Select((service, _ ) => service.Distinct());
+                .Select((service, _) => service.Distinct());
 
             context.RegisterSourceOutput(result,
-               static (context, services) =>
+                static (context, services) =>
                 {
                     foreach (var serviceGrouped in services.GroupBy(x => x!.CollectionName))
                     {
                         context.AddSource($"{serviceGrouped.Key}ServiceCollectionExtension.g.cs",
-                            SourceText.From(GenerateSourceClass(
+                            SourceText.From(SourceGeneratorHelper.GenerateSourceClass(
                                     serviceGrouped.Select(x => x)!),
                                 Encoding.UTF8));
                     }
                 });
-        }
-
-        private static ServiceInfo GetServiceInfo(GeneratorAttributeSyntaxContext context)
-        {
-            // TODO: Improve the namespace declaration, try global declaration.
-            
-            var symbol = (INamedTypeSymbol)context.TargetSymbol;
-            var ns = symbol.ContainingNamespace.ToDisplayString();
-            var name = symbol.ToDisplayString();
-
-            var interfaceName = symbol.Interfaces.Length > 0 ? symbol.Interfaces[0].ToDisplayString() : null;
-            var baseType = symbol.BaseType;
-            var baseName = baseType != null &&
-                           baseType.SpecialType != SpecialType.System_Object ?
-                baseType.ToDisplayString() :
-                null;
-
-            var arguments = context.Attributes[0].ConstructorArguments;
-
-            var serviceLifetime = arguments[0].Value?.ToString() switch
-            {
-                "0" => "Singleton",
-                "1" => "Scoped",
-                "2" => "Transient",
-                _ => throw new InvalidOperationException($"Invalid service lifetime value: {arguments[0].Value}")
-            };
-
-            string? implementationName;
-            if (arguments.Length > 1 && !arguments[1].IsNull)
-                implementationName = arguments[1].Value is ITypeSymbol typeSymbol
-                    ? typeSymbol.ToDisplayString()
-                    : null;
-            else
-                implementationName = interfaceName ?? baseName;
-
-            return new()
-            {
-                ServiceLifetime = serviceLifetime,
-                Namespace = ns,
-                ServiceName = name,
-                CollectionName = arguments[2].Value?.ToString()!,
-                ImplementationName = implementationName
-            };
-        }
-
-        private static string GenerateSourceClass(IEnumerable<ServiceInfo> serviceInfos)
-        {
-            var sb = new StringBuilder();
-            var service = serviceInfos.First();
-            sb.AppendLine("using Microsoft.Extensions.DependencyInjection;\n");
-            sb.AppendLine($"namespace {service.Namespace}.{service.CollectionName};\n");
-            sb.AppendLine($"public static class {service.CollectionName}ServiceCollectionExtensions");
-            sb.AppendLine("{");
-            sb.AppendLine($"    public static IServiceCollection Add{service.CollectionName}Services(this IServiceCollection services)");
-            sb.AppendLine("    {");
-
-            foreach (var serviceInfo in serviceInfos)
-            {
-                sb.AppendLine(serviceInfo.ImplementationName is null
-                    ? $"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ServiceName}>();"
-                    : $"        services.Add{serviceInfo.ServiceLifetime}<{serviceInfo.ImplementationName}, {serviceInfo.ServiceName}>();");
-            }
-            sb.AppendLine("        return services;");
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
-            return sb.ToString();
         }
     }
 }
