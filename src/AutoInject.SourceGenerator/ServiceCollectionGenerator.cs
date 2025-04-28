@@ -24,9 +24,9 @@ namespace RiseOn.AutoInject
                 {
                     foreach (var serviceGrouped in services.GroupBy(x => x!.CollectionName))
                     {
-                        context.AddSource($"{serviceGrouped.Key}ServiceCollectionExtension.g.cs",
+                        context.AddSource($"{serviceGrouped.Key}CollectionExtension.g.cs",
                             SourceText.From(SourceGeneratorHelper.GenerateSourceClass(
-                                    serviceGrouped.Select(x => x)!),
+                                    serviceGrouped.Select(x => x)),
                                 Encoding.UTF8));
                     }
                 });

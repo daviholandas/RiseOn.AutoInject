@@ -5,7 +5,7 @@ using RiseOn.AutoInject;
 
 var services = new ServiceCollection();
 
-services.UseAutoInjectedServices();
+services.UseAutoInjectExamplesServices();
 
 var pro = services.BuildServiceProvider();
 

@@ -28,7 +28,7 @@
         /// This property allows categorization of services within the dependency injection container,
         /// enabling more organized management of service registrations.
         /// </summary>
-        public string? CollectionName { get; set; } = "AutoInjectedServices";
+        public string? CollectionName { get; set; }
 
         /// <summary>
         /// Gets or sets the unique key associated with the service registration.
