@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using RiseOn.AutoInject.Extensions;
 
 namespace RiseOn.AutoInject
 {
@@ -23,6 +24,10 @@ namespace RiseOn.AutoInject
         public static ServiceInfo GetServiceInfo(GeneratorAttributeSyntaxContext context)
         {
             var symbol = (INamedTypeSymbol)context.TargetSymbol;
+
+            var arguments = context.Attributes[0].NamedArguments
+                .ToDictionary(x => x.Key, x => x.Value.Value);
+
             var name = symbol.ToDisplayString();
 
             var interfaceName = symbol.Interfaces.Length > 0 ? symbol.Interfaces[0].ToDisplayString() : null;
@@ -32,69 +37,76 @@ namespace RiseOn.AutoInject
                 baseType.ToDisplayString() :
                 null;
 
-            var collectionDefault = symbol.ContainingNamespace.ToDisplayString().Replace(".", "");
-
-            var serviceLifetime = context.Attributes[0].ConstructorArguments[0].Value?.ToString() switch
-            {
-                "0" => "Singleton",
-                "1" => "Scoped",
-                "2" => "Transient",
-                _ => throw new InvalidOperationException($"Invalid service lifetime value!")
-            };
-
-            var argumentsNamed = context.Attributes[0].NamedArguments;
-
-            var ns = argumentsNamed
-                .FirstOrDefault(x => x.Key == "ServicesNameSpace").Value.Value?.ToString();
-            var collectionName = argumentsNamed
-                .FirstOrDefault(x => x.Key == "CollectionName").Value.Value?.ToString();
-            var implementationOf = argumentsNamed
-                .FirstOrDefault(x => x.Key == "ImplementationOf").Value.Value?.ToString();
-            var serviceKey = argumentsNamed
-                .FirstOrDefault(x => x.Key == "Key").Value.Value;
-
             return new()
             {
-                ServiceLifetime = serviceLifetime,
-                Namespace = ns,
-                ServiceName = name,
-                CollectionName = collectionName ?? collectionDefault + "Services" ,
-                ImplementationName = string.IsNullOrEmpty(implementationOf) ? interfaceName ?? baseName : implementationOf,
-                Key = serviceKey
+                ServiceLifetime = ((int?)context.Attributes[0].ConstructorArguments[0].Value switch
+                {
+                    0 => "Singleton",
+                    1 => "Scoped",
+                    2 => "Transient",
+                    _ => throw new InvalidOperationException("Invalid service lifetime value!")
+                }),
+                Namespace = arguments.GetValueOrDefault("ServicesNameSpace")?.ToString(),
+                ServiceName = symbol.ToDisplayString(),
+                CollectionName = (string?)arguments.GetValueOrDefault("CollectionName") ??
+                                 $"{symbol.ContainingNamespace.ToDisplayString().Replace(".", "")}Services",
+                ImplementationName = GetImplementationName(symbol, (string?)arguments.GetValueOrDefault("ImplementationOf")),
+                Key = arguments.GetValueOrDefault("Key")
             };
         }
 
+        private static string? GetImplementationName(INamedTypeSymbol symbol,
+            string? implementationOf)
+        {
+            if (!string.IsNullOrEmpty(implementationOf))
+                return implementationOf;
+
+            return symbol.Interfaces.Length > 0
+                ? symbol.Interfaces[0].ToDisplayString()
+                : symbol.BaseType?.SpecialType != SpecialType.System_Object
+                    ? symbol.BaseType?.ToDisplayString()
+                    : null;
+        }
+
+        // TODO: Fix the align header in the source generated code.
         public static string GenerateSourceClass(IEnumerable<ServiceInfo> serviceInfos)
         {
-            var sb = new StringBuilder();
-            var service = serviceInfos.First();
+            var services = serviceInfos.ToList();
+            var first = services.First();
+            
+            var sb = new StringBuilder(Header)
+                .AppendLine("using Microsoft.Extensions.DependencyInjection;\n");
 
-            sb.AppendLine(Header);
+            if (!string.IsNullOrEmpty(first.Namespace))
+                sb.AppendLine($"namespace {first.Namespace};\n");
 
-            sb.AppendLine("using Microsoft.Extensions.DependencyInjection;\n");
+            sb.AppendLine($"public static class {first.CollectionName}CollectionExtensions")
+                .AppendLine("{")
+                .AppendLine($"    public static IServiceCollection Use{first.CollectionName}(this IServiceCollection services)")
+                .AppendLine("    {");
 
-            if(!string.IsNullOrEmpty(service.Namespace))
-                sb.AppendLine($"namespace {service.Namespace};\n");
-
-            sb.AppendLine($"public static class {service.CollectionName}CollectionExtensions");
-            sb.AppendLine("{");
-            sb.AppendLine($"    public static IServiceCollection Use{service.CollectionName}(this IServiceCollection services)");
-            sb.AppendLine("    {");
-
-            foreach (var serviceInfo in serviceInfos)
+            foreach (var service in services)
             {
-                var method = serviceInfo.Key != null ? "AddKeyed" : "Add";
-                var types = serviceInfo.ImplementationName is null 
-                    ? $"<{serviceInfo.ServiceName}>"
-                    : $"<{serviceInfo.ImplementationName}, {serviceInfo.ServiceName}>";
-                var key = serviceInfo.Key != null ? $@"""{serviceInfo.Key}""" : string.Empty;
-                
-                sb.AppendLine($"        services.{method}{serviceInfo.ServiceLifetime}{types}({key});");
+                var registrationLine = GenerateServiceRegistration(service);
+                sb.AppendLine($"        {registrationLine}");
             }
-            sb.AppendLine("        return services;");
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
+
+            sb.AppendLine("        return services;")
+                .AppendLine("    }")
+                .AppendLine("}");
+
             return sb.ToString();
+        }
+
+        private static string GenerateServiceRegistration(ServiceInfo service)
+        {
+            var method = service.Key != null ? "AddKeyed" : "Add";
+            var types = service.ImplementationName is null 
+                ? $"<{service.ServiceName}>"
+                : $"<{service.ImplementationName}, {service.ServiceName}>";
+            var key = service.Key != null ? $", \"{service.Key}\"" : string.Empty;
+            
+            return $"services.{method}{service.ServiceLifetime}{types}({key.TrimStart(',')});";
         }
     }
 }
