@@ -14,6 +14,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageReference Include="NSubstitute" Version="5.3.0" />
         <PackageReference Include="xunit" Version="2.9.3" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
           <PrivateAssets>all</PrivateAssets>
@@ -26,9 +27,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Verify.XUnit" Version="14.7.0" />
+        <PackageReference Include="Verify.SourceGenerators" Version="1.2.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" PrivateAssets="all" />
-		<PackageReference Include="RiseOn.AutoInjection" Version="0.0.1-beta" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\AutoInject.Attributes\AutoInject.Attributes.csproj"  OutputItemType="Analyzer"/>
+      <ProjectReference Include="..\..\src\AutoInject.SourceGenerator\AutoInject.SourceGenerator.csproj" OutputItemType="Analyzer"/>
     </ItemGroup>
 
 </Project>

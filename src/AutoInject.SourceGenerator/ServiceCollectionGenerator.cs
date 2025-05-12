@@ -11,23 +11,26 @@ namespace RiseOn.AutoInject
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var result = context.SyntaxProvider
+            var serviceInfoProvider = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     "RiseOn.AutoInject.InjectServiceAttribute",
-                    predicate: static (node, _) => node is ClassDeclarationSyntax {AttributeLists: {Count: > 0}},
+                    predicate: static (node, _) => node is ClassDeclarationSyntax { AttributeLists: { Count: > 0 } },
                     transform: static (syntaxContext, _) => SourceGeneratorHelper.GetServiceInfo(syntaxContext))
-                .Collect()
-                .Select((service, _) => service.Distinct());
+                .Where(static service => service != null) // Filter out null results early
+                .Collect();
 
-            context.RegisterSourceOutput(result,
-                static (context, services) =>
+            var distinctServices = serviceInfoProvider
+                .Select(static (services, _) => services.Distinct());
+
+            context.RegisterSourceOutput(distinctServices,
+                static (sourceProductionContext, services) =>
                 {
-                    foreach (var serviceGrouped in services.GroupBy(x => x!.CollectionName))
+                    foreach (var serviceGroup in services.GroupBy(service => service!.CollectionName))
                     {
-                        context.AddSource($"{serviceGrouped.Key}CollectionExtension.g.cs",
-                            SourceText.From(SourceGeneratorHelper.GenerateSourceClass(
-                                    serviceGrouped.Select(x => x)),
-                                Encoding.UTF8));
+                        var sourceCode = SourceGeneratorHelper.GenerateSourceClass(serviceGroup);
+                        var sourceText = SourceText.From(sourceCode, Encoding.UTF8);
+
+                        sourceProductionContext.AddSource($"{serviceGroup.Key}CollectionExtension.g.cs", sourceText);
                     }
                 });
         }
