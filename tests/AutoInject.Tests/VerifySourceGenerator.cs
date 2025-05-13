@@ -17,7 +17,6 @@ public static class VerifySourceGenerator
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
         driver = driver.RunGenerators(compilation);
 
-        return Verifier.Verify(driver)
-            .UseDirectory("TestResults");
+        return Verifier.Verify(driver);
     }
 }
