@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInject.SourceGenerator"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInject.Attributes", "src\AutoInject.Attributes\AutoInject.Attributes.csproj", "{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoInject.Tests", "tests\AutoInject.Tests\AutoInject.Tests.csproj", "{1005BAD1-5400-4AB7-AEF8-57DA4701F8D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
 		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD7FED42-75BD-40C3-8DD2-DF2E4C7A7558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1005BAD1-5400-4AB7-AEF8-57DA4701F8D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1005BAD1-5400-4AB7-AEF8-57DA4701F8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1005BAD1-5400-4AB7-AEF8-57DA4701F8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1005BAD1-5400-4AB7-AEF8-57DA4701F8D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

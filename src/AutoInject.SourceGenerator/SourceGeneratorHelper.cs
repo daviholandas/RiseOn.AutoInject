@@ -43,7 +43,9 @@ namespace RiseOn.AutoInject
                 Namespace = arguments.GetValueOrDefault("ServicesNameSpace")?.ToString(),
                 ServiceName = symbol.ToDisplayString(),
                 CollectionName = arguments.GetValueOrDefault("CollectionName")?.ToString() ??
-                                 symbol.ContainingNamespace.ToDisplayString().Replace(".", "") + "Services",
+                                 (symbol.ContainingNamespace is { IsGlobalNamespace: false }  ?
+                                     symbol.ContainingNamespace.ToDisplayString().Replace(".", "") + "Services" :
+                                     "AutoInjectedServices"),
                 ImplementationName = GetImplementationName(symbol, arguments.GetValueOrDefault("ImplementationOf")?.ToString()),
                 Key = arguments.GetValueOrDefault("Key")
             };
@@ -51,6 +53,7 @@ namespace RiseOn.AutoInject
 
         private static string? GetImplementationName(INamedTypeSymbol symbol, string? implementationOf)
         {
+            // TODO check if implementation type is a valid, not a system type and when not have a interface or base type but a system type
             if (!string.IsNullOrEmpty(implementationOf))
                 return implementationOf;
 

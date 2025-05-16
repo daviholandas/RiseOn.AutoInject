@@ -16,7 +16,7 @@ namespace RiseOn.AutoInject
                     "RiseOn.AutoInject.InjectServiceAttribute",
                     predicate: static (node, _) => node is ClassDeclarationSyntax { AttributeLists: { Count: > 0 } },
                     transform: static (syntaxContext, _) => SourceGeneratorHelper.GetServiceInfo(syntaxContext))
-                .Where(static service => service != null) // Filter out null results early
+                .Where(static service => service != null)
                 .Collect();
 
             var distinctServices = serviceInfoProvider

@@ -2,10 +2,14 @@
   <Folder Name="/build/">
     <Project Path="build/_build.csproj" />
   </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/AutoInject.Tests/AutoInject.Tests.csproj" Type="Classic C#" />
+  <Folder Name="/sample/">
+    <Project Path="samples/AutoInjectSamples/AutoInjectSamples.csproj" Id="49f4d87b-d3a5-4dcc-a555-7b6a39131b9d" />
   </Folder>
-  <Project Path="src/AutoInject.Examples/AutoInject.Examples.csproj" />
-  <Project Path="src/AutoInject.SourceGenerator/AutoInject.SourceGenerator.csproj" />
-  <Project Path="src/AutoInject.Attributes/AutoInject.Attributes.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/AutoInject.Attributes/AutoInject.Attributes.csproj" />
+    <Project Path="src/AutoInject.SourceGenerator/AutoInject.SourceGenerator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AutoInject.Tests/AutoInject.Tests.csproj" />
+  </Folder>
 </Solution>

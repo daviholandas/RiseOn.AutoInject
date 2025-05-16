@@ -25,9 +25,9 @@
       "type": "string",
       "enum": [
         "Building",
-        "PackToTest",
-        "RestoreToTests",
-        "Run"
+        "Restore",
+        "Run",
+        "Test"
       ]
     },
     "Verbosity": {
