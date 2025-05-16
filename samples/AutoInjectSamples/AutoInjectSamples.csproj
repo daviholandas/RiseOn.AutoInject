@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AutoInject.Attributes\AutoInject.Attributes.csproj" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\..\src\AutoInject.Attributes\AutoInject.Attributes.csproj"/>
     <ProjectReference Include="..\..\src\AutoInject.SourceGenerator\AutoInject.SourceGenerator.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
 

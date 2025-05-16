@@ -1,6 +1,6 @@
 ﻿namespace RiseOn.AutoInject
 {
-    public sealed record ServiceInfo
+    internal sealed record ServiceInfo
     {
         public string? ServiceName { get; set; }
         public string? ServiceLifetime { get; set; }

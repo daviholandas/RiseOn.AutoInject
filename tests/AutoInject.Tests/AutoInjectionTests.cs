@@ -34,6 +34,18 @@ public class AutoInjectionTests
         Assert.True(serviceTest.IsKeyedService);
         Assert.Equal("NewServiceTest", serviceTest.ServiceKey);
     }
+
+    [Fact]
+    public void ServiceCollection_Extension_ShouldCreateAnExtensionClassWithInjectedServices_UsingCollectionName()
+    {
+        // Arrange & Act
+        _serviceCollection.UseAloneInject();
+        var serviceTest = _serviceCollection.FirstOrDefault(x => x.ServiceType == typeof(AloneInjectService));
+        // Assert
+        Assert.NotNull(serviceTest);
+        Assert.Equal(ServiceLifetime.Scoped, serviceTest.Lifetime);
+        Assert.Equal(typeof(AloneInjectService), serviceTest.ServiceType);
+    }
 }
 
 
@@ -65,3 +77,13 @@ public class ServiceTest : IDisposable, IServiceTest
 }
 
 public interface IServiceTest {}
+
+[InjectService(ServiceLifetimeType.Scoped, true,
+   CollectionName = "AloneInject")]
+public class AloneInjectService : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}

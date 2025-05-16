@@ -9,7 +9,7 @@ public interface ISampleService{}
 public abstract class SampleServiceAbstract { }
 
 [InjectService(ServiceLifetimeType.Scoped)]
-public class SampleService : ISampleService
+public class SampleService
 {
     public void Dispose()
     {
