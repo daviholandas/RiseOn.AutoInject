@@ -36,6 +36,11 @@ namespace RiseOn.AutoInject
                 _ => throw new InvalidOperationException("Invalid service lifetime value!")
             };
 
+            var namespaceRelative = symbol.ContainingNamespace.ToDisplayString().Replace(".", "");
+            var collectionNameByNs = namespaceRelative.Contains("Services") ?
+                namespaceRelative :
+                namespaceRelative + "Services";
+
             return new ServiceInfo
             {
                 ServiceLifetime = serviceLifetime,
@@ -43,7 +48,7 @@ namespace RiseOn.AutoInject
                 ServiceName = symbol.ToDisplayString(),
                 CollectionName = arguments.GetValueOrDefault(nameof(InjectServiceAttribute.CollectionName))?.ToString()
                     ?? (symbol.ContainingNamespace is { IsGlobalNamespace: false }
-                        ? symbol.ContainingNamespace.ToDisplayString().Replace(".", "") + "Services"
+                        ? collectionNameByNs
                         : "AutoInjectedServices"),
                 ImplementationName = GetImplementationName(
                     symbol,
