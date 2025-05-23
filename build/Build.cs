@@ -1,10 +1,18 @@
 using Nuke.Common;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+[GitHubActions(
+    "CI",
+    GitHubActionsImage.UbuntuLatest,
+    On = [GitHubActionsTrigger.Push, GitHubActionsTrigger.PullRequest],
+    InvokedTargets = [nameof(Run)],
+    ImportSecrets = [nameof(NuGetApiKey)]
+    )]
 class Build : NukeBuild
 {
     public static int Main () => Execute<Build>(x => x.Run);
@@ -12,7 +20,8 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("API key for pushing NuGet packages")] 
+    [Parameter]
+    [Secret]
     readonly string NuGetApiKey;
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
@@ -67,7 +76,7 @@ class Build : NukeBuild
 
     Target Pack => _ => _
         .DependsOn(Test)
-        .Produces(ArtifactsDirectory)
+        .Produces(PackagesDirectory / "*.nupkg")
         .Executes(() =>
         {
             DotNetPack(config => config

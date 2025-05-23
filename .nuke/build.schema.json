@@ -114,7 +114,7 @@
         },
         "NuGetApiKey": {
           "type": "string",
-          "description": "API key for pushing NuGet packages"
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
         "Solution": {
           "type": "string",
