@@ -24,7 +24,10 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
-        "Building",
+        "Clean",
+        "Compile",
+        "Pack",
+        "PushNuget",
         "Restore",
         "Run",
         "Test"
@@ -108,6 +111,10 @@
             "Debug",
             "Release"
           ]
+        },
+        "NuGetApiKey": {
+          "type": "string",
+          "description": "API key for pushing NuGet packages"
         },
         "Solution": {
           "type": "string",

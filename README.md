@@ -124,7 +124,7 @@ public static class SampleServicesCollectionExtensions
 ```
 
 ## Example
-See the [ `samples/AutoInjectSamples/Program.cs`](../RiseOn.AutoInject/samples/AutoInjectSamples/Program.cs) for a working example.
+See the `samples/AutoInjectSamples/Program.cs` for a working example.
 
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests.

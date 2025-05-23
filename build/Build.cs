@@ -3,7 +3,6 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
-using System.Linq;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 class Build : NukeBuild
@@ -23,7 +22,21 @@ class Build : NukeBuild
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     AbsolutePath PackagesDirectory => ArtifactsDirectory / "packages";
 
+    string Version => "1.0.0-beta";
+
+    Target Clean => _ => _
+        .Before(Restore)
+        .Executes(() =>
+        {
+            SourceDirectory.GlobDirectories("**/bin", "**/obj")
+                .ForEach(dir => dir.DeleteDirectory());
+
+            if (ArtifactsDirectory.Exists())
+                ArtifactsDirectory.CreateOrCleanDirectory();
+        });
+
     Target Restore => _ => _
+        .DependsOn(Clean)
         .Executes(() =>
         {
             DotNetRestore(config => config
@@ -54,18 +67,20 @@ class Build : NukeBuild
 
     Target Pack => _ => _
         .DependsOn(Test)
+        .Produces(ArtifactsDirectory)
         .Executes(() =>
         {
             DotNetPack(config => config
                 .SetConfiguration(Configuration)
                 .SetProject(Solution)
                 .SetOutputDirectory(PackagesDirectory)
+                .SetVersion(Version)
                 .EnableNoBuild()
                 .EnableNoRestore()
             );
         });
 
-    Target Push => _ => _
+    Target PushNuget => _ => _
         .DependsOn(Pack)
         .Requires(() => NuGetApiKey)
         .Executes(() =>
@@ -82,6 +97,6 @@ class Build : NukeBuild
         });
 
     Target Run => _ => _
-        .DependsOn(Push)
+        .DependsOn(PushNuget)
         .Executes();
 }

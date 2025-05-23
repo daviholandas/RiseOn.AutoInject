@@ -4,11 +4,19 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <LangVersion>9</LangVersion>
       <IncludeBuildOutput>false</IncludeBuildOutput>
-      <PackageId>RiseOn.AutoInjection</PackageId>
+      <PackageId>RiseOn.AutoInject</PackageId>
+      <Version>$(Version)</Version>
+      <RepositoryUrl>https://github.com/daviholandas/RiseOn.AutoInject</RepositoryUrl>
+      <Authors>Davi Holanda</Authors>
+      <Company>RiseOn</Company>
+      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+      <PackageTags>Dependecy Injection DI DependencyInjection</PackageTags>
       <AssemblyName>AutoInject.SourceGenerator</AssemblyName>
       <RootNamespace>RiseOn.AutoInject</RootNamespace>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
       <Nullable>enable</Nullable>
-      <Description>A source generator for creating helper extension methods on enums using a [EnumExtensions] attribute</Description>
+      <Description>A source generator to autoinject services into the dependency injection container</Description>
       <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
       <IsPackable>true</IsPackable>
   </PropertyGroup>
@@ -22,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+      <None Include=".\..\..\README.md" Pack="true" PackagePath="\" />
       <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
       <None Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
       <None Include="$(OutputPath)\AutoInject.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
