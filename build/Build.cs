@@ -31,7 +31,7 @@ class Build : NukeBuild
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     AbsolutePath PackagesDirectory => ArtifactsDirectory / "packages";
 
-    string Version => "1.0.1-beta";
+    string Version => "1.0.0";
 
     Target Clean => _ => _
         .Before(Restore)
