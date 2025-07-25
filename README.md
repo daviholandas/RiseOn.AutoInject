@@ -126,6 +126,34 @@ public static class SampleServicesCollectionExtensions
 ## Example
 See the `samples/AutoInjectSamples/Program.cs` for a working example.
 
+## Code Quality & Analysis
+
+This project uses SonarQube for code quality analysis. The analysis runs automatically on push and pull requests to the main/master branch.
+
+### Setting up SonarQube Integration
+
+To enable SonarQube analysis in your fork or when contributing:
+
+1. **For SonarCloud (Recommended):**
+   - Go to [SonarCloud](https://sonarcloud.io) and sign in with your GitHub account
+   - Import your repository
+   - Get your project key and organization from the project settings
+   - Generate a token from [Account Security](https://sonarcloud.io/account/security)
+
+2. **Configure GitHub Secrets:**
+   - Go to your repository → Settings → Secrets and variables → Actions
+   - Add these repository secrets:
+     - `SONAR_TOKEN`: Your SonarQube/SonarCloud authentication token
+     - `SONAR_HOST_URL`: Your SonarQube server URL
+       - For SonarCloud: `https://sonarcloud.io`
+       - For self-hosted: `https://your-sonarqube-server.com`
+
+3. **For Self-hosted SonarQube:**
+   - Update the `sonar.projectKey` and `sonar.organization` in `sonar-project.properties`
+   - Generate a token from your SonarQube instance user settings
+
+The SonarQube analysis will generate coverage reports and commit them to the `/sonar-report` directory for tracking code quality over time.
+
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests.
 
